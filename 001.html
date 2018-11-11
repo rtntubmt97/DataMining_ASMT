@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test</title>
+</head>
+<body>
+	<div style="margin-left: 30">
+		<canvas id = 'ltpcanvas' height='350' width='350'></canvas>
+	</div>
+	<script type = "text/javascript">
+		window.onload = function(){
+			var ltpc = document.getElementById('ltpcanvas');
+			var context = ltpc.getContext('2d');
+			ltpc.addEventListener('mousedown', onDown, false);
+		}
+		function onDown(event){
+			cx = event.pageX;
+			cy = event.pageY;
+			alert("X,Y="+cx+','+cy);
+		}
+	</script>
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html>
+    <head>
+        <title>test</title>
+        <script type="text/javascript">
+            alert("this works");
+        </script>
+    </head>
+    <body>
+    </body>
+</html> -->
