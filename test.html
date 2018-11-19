@@ -1,12 +1,28 @@
-//thử làm 1 trang như web mẫu
+<!-- //thử làm 1 trang như web mẫu
 //chưa có code mining cơ bản, mới có datastruct là linkedlist
-//bấm vào bảng trắng hiện ra các điểm nhiều màu, là để test hàm tạo màu cho cluster
-
-
+//bấm vào bảng trắng hiện ra các điểm nhiều màu, là để test hàm tạo màu cho cluster -->
 <!DOCTYPE html>
 <html>
 <head>
 	<title>test</title>
+	<style>
+	#ltpcanvas{
+		Background-color: #ffffff;
+		width: 767px;
+		height: 412px;
+		top: 80px;
+		left: 255px;
+		position:absolute;
+	}
+	h1{
+		color: #0b0988fb;
+		font-size: 40px;
+		text-align: center;
+	}
+	body{			
+		Background-color: #a2a84775;
+	}
+</style>
 </head>
 <body>
 	<h1>DBSCAN 2D_Demo</h1>
@@ -22,34 +38,16 @@
 	<br>
 	<br>
 	<button onclick="myRefresh()">Clear points</button>
-	<style>
-		#ltpcanvas{
-			Background-color: #ffffff;
-			width: 767px;
-            height: 412px;
-			top: 80px;
-			left: 255px;
-			position:absolute;
-		}
-		h1{
-			color: #0b0988fb;
-			font-size: 40px;
-			text-align: center;
-		}
-		body{			
-			Background-color: #a2a84775;
-		}
-	</style>
 	<script type = "text/javascript">
 	/////////////////////////////////		Data struct
 		var i = 0; //dung de test ham myColor()
 		class Node {
-   			constructor(x, y, next) {
-        		this.x = x;
+			constructor(x, y, next) {
+				this.x = x;
 				this.y = y;
 				this.cluster = i++; //dung de test ham myColor()
-        		this.next = next;        		
-    		}
+				this.next = next;        		
+			}
 		}
 		class LinkedList{
 			constructor(){
@@ -59,48 +57,48 @@
 			addToTail(x,y) {
 				const newNode = new Node(x,y,null);
 				if (this.tail)
-					{
-						this.tail.next = newNode;
-					}
+				{
+					this.tail.next = newNode;
+				}
 				else 
-					{
-						this.head = newNode;
-					}
+				{
+					this.head = newNode;
+				}
 				this.tail = newNode;				
 			}
 		}
 	/////////////////////////////////       Draw function
-		function myDraw(node){
-			var pointSize = 4
-			var ctx = document.getElementById("ltpcanvas").getContext("2d");
-			var x = 0.0;
-			var x = 0.0;
-			
-			while (node != null){
-				x = node.x;
-				y = node.y;
-				if (node.cluster == -1)
-				{
-					ctx.fillStyle = "#000000"; 
-				}
-				else 
-				{
-					ctx.fillStyle = myColor(node.cluster);
-				}
-				ctx.beginPath();
-				ctx.arc(x, y, pointSize, 0, Math.PI * 2);				
-				ctx.fill();
+	function myDraw(node){
+		var pointSize = 4
+		var ctx = document.getElementById("ltpcanvas").getContext("2d");
+		var x = 0.0;
+		var x = 0.0;
 
-				ctx.beginPath();
-				ctx.arc(x, y, pointSize+0.25, 0, Math.PI * 2);
-				ctx.lineWidth = 0.5;
-				ctx.strokeStyle = ctx.fillStyle;
-				ctx.stroke();				
+		while (node != null){
+			x = node.x;
+			y = node.y;
+			if (node.cluster == -1)
+			{
+				ctx.fillStyle = "#000000"; 
+			}
+			else 
+			{
+				ctx.fillStyle = myColor(node.cluster);
+			}
+			ctx.beginPath();
+			ctx.arc(x, y, pointSize, 0, Math.PI * 2);				
+			ctx.fill();
 
-				node = node.next;
-				
-			}			
-		}
+			ctx.beginPath();
+			ctx.arc(x, y, pointSize+0.25, 0, Math.PI * 2);
+			ctx.lineWidth = 0.5;
+			ctx.strokeStyle = ctx.fillStyle;
+			ctx.stroke();				
+
+			node = node.next;
+
+		}			
+	}
 		function myColor(value){                                           //ham cho ma hex mau dua vao so nhap vao
 			var colorB = ((value+1)*43%187 + 43).toString(16);
 			if (colorB.length == 1) colorB = "0" + colorB;
@@ -127,7 +125,7 @@
 		MinPstSlider.onchange = function(){
 			minpts = MinPts.innerHTML = this.value; 
 		}
-	
+
 		var b = new LinkedList();
 		window.onload = function(){
 			var ltpc = document.getElementById('ltpcanvas');
@@ -142,7 +140,7 @@
 			b.addToTail(cx,cy);			
 			myDraw(b.head);			
 		}
-	
+
 	</script>
 </body>
 </html>
@@ -157,4 +155,4 @@
     </head>
     <body>
     </body>
-</html> -->
+    </html> -->
