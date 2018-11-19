@@ -41,35 +41,35 @@
 		<button onclick="myRefresh()">Clear points</button>
 	</body>
 	<script type = "text/javascript">
-		/////////////////////////////////		Data struct
-		var i = 0; //dung de test ham myColor()
+				/////////////////////////////////		Data struct
+		//var i = 0; //dung de test ham myColor()
 		class Node {
 			constructor(x, y, next) {
 				this.x = x;
 				this.y = y;
-				this.cluster = i++; //dung de test ham myColor()
+				this.cluster = 0; //dung de test ham myColor()
 				this.next = next;
 			}
 		}
-		class LinkedList{
-			constructor(){
-				this.head = null;
-				this.tail = null;
-			}
-			addToTail(x,y) {
-				const newNode = new Node(x,y,null);
-				if (this.tail)
-				{
-					this.tail.next = newNode;
-				}
-				else
-				{
-					this.head = newNode;
-				}
-				this.tail = newNode;
-			}
-		}
-		/////////////////////////////////       Draw function
+		// class LinkedList{
+		// 	constructor(){
+		// 		this.head = null;
+		// 		this.tail = null;
+		// 	}
+		// 	addToTail(x,y) {
+		// 		const newNode = new Node(x,y,null);
+		// 		if (this.tail)
+		// 		{
+		// 			this.tail.next = newNode;
+		// 		}
+		// 		else
+		// 		{
+		// 			this.head = newNode;
+		// 		}
+		// 		this.tail = newNode;
+		// 	}
+		// }
+		//init theme value
 		var Eps = document.getElementById("Eps");
 		var EpsSlider = document.getElementById("EpsSlider");
 		var MinPts = document.getElementById("MinPts");
@@ -83,51 +83,58 @@
 		MinPstSlider.onchange = function(){
 			minpts = MinPts.innerHTML = this.value;
 		}
-		var b = new LinkedList();
-		function myRefresh(){ //refresh page....bug or fearture????
-			location.reload();
-		}
+
+		//init algorithm value
+		var data = [];
+
 		window.onload = function(){
 			var ltpc = document.getElementById('ltpcanvas');
 			var context = ltpc.getContext('2d');
 			ltpc.addEventListener('mousedown', onDown, false);
+		}
+		// functions
+		function myRefresh(){ //refresh page....bug or fearture????
+			location.reload();
 		}
 		function onDown(event){
 			var ltpc = document.getElementById('ltpcanvas');
 			var rect = ltpc.getBoundingClientRect()
 			cx = event.pageX - rect.left;
 			cy = event.pageY - rect.top;
-			b.addToTail(cx,cy);
-			myDraw(b.head);
+			data.push(new Node(cx, cy, null));
+			myDBSCAN();
 		}
-		function myDraw(node){
+		/////////////////////////////////       Draw function
+		function myDBSCAN(){
 			var pointSize = 4
 			var ctx = document.getElementById("ltpcanvas").getContext("2d");
-			var x = 0.0;
-			var x = 0.0;
-			while (node != null){
-				x = node.x;
-				y = node.y;
-				if (node.cluster == -1)
-				{
-					ctx.fillStyle = "#000000";
-				}
-				else
-				{
-					ctx.fillStyle = myColor(node.cluster);
-				}
-				ctx.beginPath();
-				ctx.arc(x, y, pointSize, 0, Math.PI * 2);
-				ctx.fill();
-				ctx.beginPath();
-				ctx.arc(x, y, pointSize+0.25, 0, Math.PI * 2);
-				ctx.lineWidth = 0.5;
-				ctx.strokeStyle = ctx.fillStyle;
-				ctx.stroke();
-				node = node.next;
+			var x = node.x;
+			var y = node.y;
+			var currentCluster = 0;
+
+			for (i = 0; i < data.lengths; i++){
+
 			}
+			if (node.cluster == -1)
+			{
+				ctx.fillStyle = "#000000";
+			}
+			else
+			{
+				ctx.fillStyle = DbscanColor(node.cluster);
+			}
+			ctx.beginPath();
+			ctx.arc(x, y, pointSize, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(x, y, pointSize+0.25, 0, Math.PI * 2);
+			ctx.lineWidth = 0.5;
+			ctx.strokeStyle = ctx.fillStyle;
+			ctx.stroke();
 		}
-		function myColor(value){                                           //ham cho ma hex mau dua vao so nhap vao
+
+		//DBSCAN implement function
+		function DbscanColor(value){
 			var colorB = ((value+1)*43%187 + 43).toString(16);
 			if (colorB.length == 1) colorB = "0" + colorB;
 			var colorG = ((value+1)*37%193 + 37).toString(16);
@@ -136,5 +143,7 @@
 			if (colorR.length == 1) colorR = "0" + colorR;
 			return "#" + colorR + colorG + colorB;
 		}
+
+
 	</script>
 </html>
