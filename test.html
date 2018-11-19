@@ -1,52 +1,54 @@
 <!-- //thử làm 1 trang như web mẫu
-//chưa có code mining cơ bản, mới có datastruct là linkedlist
-//bấm vào bảng trắng hiện ra các điểm nhiều màu, là để test hàm tạo màu cho cluster -->
+	//chưa có code mining cơ bản, mới có datastruct là linkedlist
+	//bấm vào bảng trắng hiện ra các điểm nhiều màu, là để test hàm tạo màu cho cluster
+-->
 <!DOCTYPE html>
 <html>
-<head>
-	<title>test</title>
-	<style>
-	#ltpcanvas{
-		Background-color: #ffffff;
-		width: 767px;
-		height: 412px;
-		top: 80px;
-		left: 255px;
-		position:absolute;
-	}
-	h1{
-		color: #0b0988fb;
-		font-size: 40px;
-		text-align: center;
-	}
-	body{			
-		Background-color: #a2a84775;
-	}
-</style>
-</head>
-<body>
-	<h1>DBSCAN 2D_Demo</h1>
-	<div>
-		<canvas id = 'ltpcanvas' width="767" height="412"></canvas>
-	</div>
-	<div style="width: 200px;">Eps: <span id = "Eps"></span></div>
-	<input autocomplete="off" type="range" min="1" max="100" value="20" id = "EpsSlider">
-	<br>
-	<br>
-	<div style="width: 200px;">Min pts: <span id = "MinPts"></span></div>
-	<input autocomplete="off" type="range" min="1" max="20" value="4" id = "MinPstSlider">
-	<br>
-	<br>
-	<button onclick="myRefresh()">Clear points</button>
+	<head>
+		<title>test</title>
+		<style>
+		#ltpcanvas{
+			Background-color: #ffffff;
+			width: 767px;
+			height: 412px;
+			top: 80px;
+			left: 255px;
+			position:absolute;
+		}
+		h1{
+			color: #0b0988fb;
+			font-size: 40px;
+			text-align: center;
+		}
+		body{
+			Background-color: #a2a84775;
+		}
+		</style>
+	</head>
+	<body>
+		<h1>DBSCAN 2D_Demo</h1>
+		<div>
+			<canvas id = 'ltpcanvas' width="767" height="412"></canvas>
+		</div>
+		<div style="width: 200px;">Eps: <span id = "Eps"></span></div>
+		<input autocomplete="off" type="range" min="1" max="100" value="20" id = "EpsSlider">
+		<br>
+		<br>
+		<div style="width: 200px;">Min pts: <span id = "MinPts"></span></div>
+		<input autocomplete="off" type="range" min="1" max="20" value="4" id = "MinPstSlider">
+		<br>
+		<br>
+		<button onclick="myRefresh()">Clear points</button>
+	</body>
 	<script type = "text/javascript">
-	/////////////////////////////////		Data struct
+		/////////////////////////////////		Data struct
 		var i = 0; //dung de test ham myColor()
 		class Node {
 			constructor(x, y, next) {
 				this.x = x;
 				this.y = y;
 				this.cluster = i++; //dung de test ham myColor()
-				this.next = next;        		
+				this.next = next;
 			}
 		}
 		class LinkedList{
@@ -60,58 +62,14 @@
 				{
 					this.tail.next = newNode;
 				}
-				else 
+				else
 				{
 					this.head = newNode;
 				}
-				this.tail = newNode;				
+				this.tail = newNode;
 			}
 		}
-	/////////////////////////////////       Draw function
-	function myDraw(node){
-		var pointSize = 4
-		var ctx = document.getElementById("ltpcanvas").getContext("2d");
-		var x = 0.0;
-		var x = 0.0;
-
-		while (node != null){
-			x = node.x;
-			y = node.y;
-			if (node.cluster == -1)
-			{
-				ctx.fillStyle = "#000000"; 
-			}
-			else 
-			{
-				ctx.fillStyle = myColor(node.cluster);
-			}
-			ctx.beginPath();
-			ctx.arc(x, y, pointSize, 0, Math.PI * 2);				
-			ctx.fill();
-
-			ctx.beginPath();
-			ctx.arc(x, y, pointSize+0.25, 0, Math.PI * 2);
-			ctx.lineWidth = 0.5;
-			ctx.strokeStyle = ctx.fillStyle;
-			ctx.stroke();				
-
-			node = node.next;
-
-		}			
-	}
-		function myColor(value){                                           //ham cho ma hex mau dua vao so nhap vao
-			var colorB = ((value+1)*43%187 + 43).toString(16);
-			if (colorB.length == 1) colorB = "0" + colorB;
-			var colorG = ((value+1)*37%193 + 37).toString(16);
-			if (colorG.length == 1) colorG = "0" + colorG;
-			var colorR = ((value+1)*71%159 + 71).toString(16);
-			if (colorR.length == 1) colorR = "0" + colorR;
-			return "#" + colorR + colorG + colorB;
-		}
-		function myRefresh(){ //refresh page....bug or fearture????
-			location.reload();
-		}
-
+		/////////////////////////////////       Draw function
 		var Eps = document.getElementById("Eps");
 		var EpsSlider = document.getElementById("EpsSlider");
 		var MinPts = document.getElementById("MinPts");
@@ -119,14 +77,16 @@
 		var eps = 20, minpts = 4;
 		Eps.innerHTML = EpsSlider.value;
 		EpsSlider.onchange = function(){
-			eps = Eps.innerHTML = this.value; 
+			eps = Eps.innerHTML = this.value;
 		}
 		MinPts.innerHTML = MinPstSlider.value;
 		MinPstSlider.onchange = function(){
-			minpts = MinPts.innerHTML = this.value; 
+			minpts = MinPts.innerHTML = this.value;
 		}
-
 		var b = new LinkedList();
+		function myRefresh(){ //refresh page....bug or fearture????
+			location.reload();
+		}
 		window.onload = function(){
 			var ltpc = document.getElementById('ltpcanvas');
 			var context = ltpc.getContext('2d');
@@ -137,22 +97,44 @@
 			var rect = ltpc.getBoundingClientRect()
 			cx = event.pageX - rect.left;
 			cy = event.pageY - rect.top;
-			b.addToTail(cx,cy);			
-			myDraw(b.head);			
+			b.addToTail(cx,cy);
+			myDraw(b.head);
 		}
-
+		function myDraw(node){
+			var pointSize = 4
+			var ctx = document.getElementById("ltpcanvas").getContext("2d");
+			var x = 0.0;
+			var x = 0.0;
+			while (node != null){
+				x = node.x;
+				y = node.y;
+				if (node.cluster == -1)
+				{
+					ctx.fillStyle = "#000000";
+				}
+				else
+				{
+					ctx.fillStyle = myColor(node.cluster);
+				}
+				ctx.beginPath();
+				ctx.arc(x, y, pointSize, 0, Math.PI * 2);
+				ctx.fill();
+				ctx.beginPath();
+				ctx.arc(x, y, pointSize+0.25, 0, Math.PI * 2);
+				ctx.lineWidth = 0.5;
+				ctx.strokeStyle = ctx.fillStyle;
+				ctx.stroke();
+				node = node.next;
+			}
+		}
+		function myColor(value){                                           //ham cho ma hex mau dua vao so nhap vao
+			var colorB = ((value+1)*43%187 + 43).toString(16);
+			if (colorB.length == 1) colorB = "0" + colorB;
+			var colorG = ((value+1)*37%193 + 37).toString(16);
+			if (colorG.length == 1) colorG = "0" + colorG;
+			var colorR = ((value+1)*71%159 + 71).toString(16);
+			if (colorR.length == 1) colorR = "0" + colorR;
+			return "#" + colorR + colorG + colorB;
+		}
 	</script>
-</body>
 </html>
-
-<!-- <!DOCTYPE html>
-<html>
-    <head>
-        <title>test</title>
-        <script type="text/javascript">
-            alert("this works");
-        </script>
-    </head>
-    <body>
-    </body>
-    </html> -->
