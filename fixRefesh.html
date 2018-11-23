@@ -1,0 +1,236 @@
+<!-- //đã fix hàm myRefresh()
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>test</title>
+		<style>
+		#ltpcanvas{
+			Background-color: #ffffff;
+			width: 767px;
+			height: 412px;
+			top: 80px;
+			left: 255px;
+			position:absolute;
+		}
+		h1{
+			color: #0b0988fb;
+			font-size: 40px;
+			text-align: center;
+		}
+		body{
+			Background-color: #a2a84775;
+		}
+		</style>
+	</head>
+	<body>
+		<h1>DBSCAN 2D_Demo</h1>
+		<div>
+			<canvas id = 'ltpcanvas' width="767" height="412"></canvas>
+		</div>
+		<div style="width: 200px;">Eps: <span id = "Eps"></span></div>
+		<input type="range" min="1" max="1000" value="200" id = "EpsSlider">
+		<br>
+		<br>
+		<div style="width: 200px;">Min pts: <span id = "MinPts"></span></div>
+		<input type="range" min="1" max="20" value="4" id = "MinPstSlider">
+		<br>
+		<br>
+		<button onclick="myRefresh()">Clear points</button>
+		<div style="width: 200px;">Log: <span id = "Log"></span></div>
+	</body>
+	<script type = "text/javascript">
+				/////////////////////////////////		Data struct
+		//var i = 0; //dung de test ham myColor()
+		class Node {
+			constructor(x, y, next) {
+				this.x = x;
+				this.y = y;
+				this.cluster = 0; //dung de test ham myColor()
+				this.next = next;
+			}
+		}
+		// class LinkedList{
+		// 	constructor(){
+		// 		this.head = null;
+		// 		this.tail = null;
+		// 	}
+		// 	addToTail(x,y) {
+		// 		const newNode = new Node(x,y,null);
+		// 		if (this.tail)
+		// 		{
+		// 			this.tail.next = newNode;
+		// 		}
+		// 		else
+		// 		{
+		// 			this.head = newNode;
+		// 		}
+		// 		this.tail = newNode;
+		// 	}
+		// }
+		//init constant
+		const newLine = "<br />";
+		//init global value
+		var Eps = document.getElementById("Eps");
+		var EpsSlider = document.getElementById("EpsSlider");
+		var MinPts = document.getElementById("MinPts");
+		var MinPstSlider = document.getElementById("MinPstSlider");
+		var Log = document.getElementById("Log");
+		var eps = 200, minpts = 4;
+		var log = "";
+		Eps.innerHTML = EpsSlider.value;
+		EpsSlider.onchange = function(){
+			eps = Eps.innerHTML = this.value;
+			myDBSCAN()
+		}
+		MinPts.innerHTML = MinPstSlider.value;
+		MinPstSlider.onchange = function(){
+			minpts = MinPts.innerHTML = this.value;
+			myDBSCAN()
+		}
+		//init algorithm value
+		var data = [];
+		window.onload = function(){
+			var ltpc = document.getElementById('ltpcanvas');
+			var context = ltpc.getContext('2d');
+			ltpc.addEventListener('mousedown', onDown, false);
+		}
+		// functions
+		function myRefresh(){ //to mau canvas = trang; xoa data.
+			var c = document.getElementById("ltpcanvas").getBoundingClientRect();
+			var ctx = document.getElementById("ltpcanvas").getContext("2d");
+			ctx.beginPath();
+			ctx.rect(0,0,c.width,c.height);
+			ctx.fillStyle = "#ffffff";
+			ctx.fill();
+			data = [];
+		}
+		function onDown(event){
+			var ltpc = document.getElementById('ltpcanvas');
+			var rect = ltpc.getBoundingClientRect();
+			cx = event.pageX - rect.left;
+			cy = event.pageY - rect.top;
+			data.push(new Node(cx, cy, null));
+			myDBSCAN();
+		}
+		/////////////////////////////////       Draw function
+		function myDBSCAN(){
+			log = "Start DBSCAN with eps: " + eps + "; minpts:" + minpts;
+			resetData();
+			log += newLine + getDataAsString();
+			var currentCluster = 0;
+			for (var i = 0; i < data.length; i++){
+				var x = data[i].x;
+				var y = data[i].y;
+				if (data[i].cluster != 0){
+					log += newLine + "Point " + getPointAsString(i) + " is skipped";
+					continue
+				}
+				var neighborPts = regionQuery(i);
+				log += newLine + "Point " + getPointAsString(i) + " has " + neighborPts.length + " neighbors";
+				if (neighborPts.length < minpts){
+					log += newLine + "Point " + getPointAsString(i) + " is assigned to cluster -1";
+					data[i].cluster = -1;
+				}
+				else{
+					currentCluster++;
+					log += newLine + "Start expanding cluster " + currentCluster;
+					expandCluster(i, neighborPts, currentCluster);
+				}
+			}
+			for (var i = 0; i < data.length; i++){
+				colorPoint(i, data[i].cluster)
+			}
+			Log.innerHTML = log;
+		}
+		function resetData(){
+			log += newLine + "Reseting cluster value of data ...";
+			for (var i = 0; i < data.length; i++){
+				data[i].cluster = 0;
+			}
+		}
+		function getPointAsString(i){
+			return "(" + data[i].x + ", " + data[i].y + ")";
+		}
+		function getDataAsString(){
+			var ret = "Data: ";
+			for(var i = 0; i < data.length - 1; i++){
+				ret += "(" + data[i].x + ", " + data[i].y + "); ";
+			}
+			ret += "(" + data[i].x + " " + data[i].y + ")";
+			return ret;
+		}
+		//expand cluster function
+		function expandCluster(currentPoint, neighborPts, currentCluster){
+			data[currentPoint].cluster = currentCluster;
+			log += newLine + "Assigned point " + getPointAsString(currentPoint) + " to cluster " + currentCluster; 
+    		var i = 0;
+    		while (i < neighborPts.length){
+    			var point = neighborPts[i];
+        		if (data[point].cluster == -1){
+        			data[point].cluster = currentCluster;
+					log += newLine + "Assigned point " + getPointAsString(point) + " to cluster " + currentCluster; 
+        		}
+        		else if (data[point].cluster == 0){
+        			data[point].cluster = currentCluster;
+					log += newLine + "Assigned point " + getPointAsString(point) + " to cluster " + currentCluster; 
+            		var incurredNeighborPts = regionQuery(point);
+            		if (incurredNeighborPts.length >= minpts){
+            			neighborPts.push.apply(neighborPts, incurredNeighborPts);
+            		}
+            	}
+        		i += 1;
+        	}    
+		}
+		//get neighbor point for a point function
+		function regionQuery(point){
+		    var neighbors = [];
+		    for(var i = 0; i < data.length; i++){
+		        if (calcEuclideDistance(point, i) < eps){
+		           neighbors.push(i);
+		        }
+		    }
+		    return neighbors;
+		}
+		function calcEuclideDistance(pointA, pointB){
+			var difX = data[pointA].x - data[pointB].x;
+			var difY = data[pointA].y - data[pointB].y;
+			//log += newLine + "Distance from " + getPointAsString(pointA) + " to " + getPointAsString(pointB) + " is " + Math.sqrt(difX*difX + difY*difY);
+			return Math.sqrt(difX*difX + difY*difY);
+		}
+		//get distinct color for each cluster
+		function getColor(value){
+			var colorB = ((value+1)*43%187 + 43).toString(16);
+			if (colorB.length == 1) colorB = "0" + colorB;
+			var colorG = ((value+1)*37%193 + 37).toString(16);
+			if (colorG.length == 1) colorG = "0" + colorG;
+			var colorR = ((value+1)*71%159 + 71).toString(16);
+			if (colorR.length == 1) colorR = "0" + colorR;
+			return "#" + colorR + colorG + colorB;
+		}
+		//color a point with its cluster id
+		function colorPoint(point, cluster){
+			var pointSize = 4
+			var ctx = document.getElementById("ltpcanvas").getContext("2d");
+			var x = data[point].x;
+			var y = data[point].y;
+			var node = data[point];
+			if (node.cluster == -1)
+			{
+				ctx.fillStyle = "#000000";
+			}
+			else
+			{
+				ctx.fillStyle = getColor(node.cluster);
+			}
+			ctx.beginPath();
+			ctx.arc(x, y, pointSize, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(x, y, pointSize+0.25, 0, Math.PI * 2);
+			ctx.lineWidth = 0.5;
+			ctx.strokeStyle = ctx.fillStyle;
+			ctx.stroke();
+		}
+	</script>
+</html>
